@@ -1,0 +1,216 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Nginx - Reverse Proxy
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: main_proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - portfolio
+    networks:
+      - web-public
+
+  # ---------------------------------------------------------------------------
+  # Portfolio
+  # ---------------------------------------------------------------------------
+  portfolio:
+    build: ./vuetify-project
+    container_name: portfolio
+    restart: always
+    networks:
+      - web-public
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: Aplicacion_Pujas
+  # ---------------------------------------------------------------------------
+  pujas_frontend:
+    build:
+      context: ../PROYECTOS/Aplicacion_Pujas/frontend
+    container_name: pujas_frontend
+    restart: always
+    networks:
+      - web-public
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: CORDOBA-BETS
+  # ---------------------------------------------------------------------------
+  bets_frontend:
+    build:
+      context: ../PROYECTOS/CORDOBA-BETS/cordoba-bets/frontend
+      dockerfile: Dockerfile
+    container_name: bets_frontend
+    restart: always
+    networks:
+      - web-public
+
+  bets_api:
+    build:
+      context: ../PROYECTOS/CORDOBA-BETS/cordoba-bets/backend
+      dockerfile: Dockerfile
+    container_name: bets_api
+    restart: always
+    networks:
+      - web-public
+    environment:
+      MONGODB_URI: mongodb://bets_db:27017/mis_apuestas_db
+
+  bets_db:
+    image: mongo:latest
+    container_name: bets_db
+    restart: always
+    networks:
+      - web-public
+    volumes:
+      - bets_mongo_data:/data/db
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: FITAI
+  # ---------------------------------------------------------------------------
+  fitai_db:
+    image: mariadb:10.6
+    container_name: fitai_db
+    networks:
+      - web-public
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: fitai_db
+      MYSQL_USER: fitai_user
+      MYSQL_PASSWORD: fitai_pass
+    volumes:
+      - fitai_db_data:/var/lib/mysql
+
+  fitai_backend:
+    build: ../PROYECTOS/FITAI/backend
+    container_name: fitai_backend
+    networks:
+      - web-public
+    environment:
+      DB_HOST: fitai_db
+      DB_USER: fitai_user
+      DB_PASSWORD: fitai_pass
+      DB_NAME: fitai_db
+      API_PORT: 9000
+    depends_on:
+      - fitai_db
+
+  fitai_frontend:
+    build: ../PROYECTOS/FITAI/frontend
+    container_name: fitai_frontend
+    networks:
+      - web-public
+    environment:
+      VITE_API_URL: "/fitai/api"
+      CHOKIDAR_USEPOLLING: "true"
+    command: [ "npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000" ]
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: imaxis
+  # ---------------------------------------------------------------------------
+  imaxis_db:
+    image: postgres:15-alpine
+    container_name: imaxis_db
+    restart: always
+    networks:
+      - web-public
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: imaxis_db
+    volumes:
+      - imaxis_pgdata:/var/lib/postgresql/data
+
+  imaxis_backend:
+    build: ../PROYECTOS/imaxis/backend
+    container_name: imaxis_backend
+    restart: always
+    networks:
+      - web-public
+    environment:
+      DB_HOST: imaxis_db
+      DB_USER: admin
+      DB_PASS: admin123
+      DB_NAME: imaxis_db
+
+  imaxis_frontend:
+    build:
+      context: ../PROYECTOS/imaxis/frontend
+      target: build-stage
+    container_name: imaxis_frontend
+    restart: always
+    networks:
+      - web-public
+    command: npm run dev -- --host
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: Landing Page Axis
+  # ---------------------------------------------------------------------------
+  landingpage_frontend:
+    build:
+      context: ../PROYECTOS/landingpage-axis
+      dockerfile: Dockerfile
+    container_name: landingpage_frontend
+    restart: always
+    networks:
+      - web-public
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: TR2 (RabbitMQ, Ollama, etc.)
+  # ---------------------------------------------------------------------------
+  # Skipping heavy services like Ollama/RabbitMQ if not strictly needed for basic loading,
+  # but including frontend/backend structure.
+
+  tr2_db:
+    image: mysql:8.0
+    container_name: tr2_db
+    restart: always
+    networks:
+      - web-public
+    environment:
+      MYSQL_DATABASE: datos
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - tr2_db_data:/var/lib/mysql
+
+  tr2_backend:
+    build: ../PROYECTOS/tr2-24-25-front-back-damtr2g6/server
+    container_name: tr2_backend
+    networks:
+      - web-public
+    depends_on:
+      - tr2_db
+
+  tr2_frontend:
+    build: ../PROYECTOS/tr2-24-25-front-back-damtr2g6/client
+    container_name: tr2_frontend
+    networks:
+      - web-public
+    command: npm run dev -- --host --port 3000
+
+  # ---------------------------------------------------------------------------
+  # PROJECT: VOICECONTROLLER
+  # ---------------------------------------------------------------------------
+  voice_frontend:
+    build:
+      context: ../PROYECTOS/VOICECONTROLLER/VOICECONTROLLER/vuetify-project
+      dockerfile: Dockerfile
+    container_name: voice_frontend
+    restart: always
+    networks:
+      - web-public
+
+networks:
+  web-public:
+    driver: bridge
+
+volumes:
+  bets_mongo_data:
+  fitai_db_data:
+  imaxis_pgdata:
+  tr2_db_data:
