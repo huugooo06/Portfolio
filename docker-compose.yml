@@ -32,7 +32,7 @@ services:
   # ---------------------------------------------------------------------------
   bets_frontend:
     build:
-      context: ../PROYECTOS/CORDOBA-BETS/cordoba-bets/frontend
+      context: ../PROYECTOS/CORDOBA-BETS/frontend
       dockerfile: Dockerfile
     container_name: bets_frontend
     restart: always
@@ -41,7 +41,7 @@ services:
 
   bets_api:
     build:
-      context: ../PROYECTOS/CORDOBA-BETS/cordoba-bets/backend
+      context: ../PROYECTOS/CORDOBA-BETS/backend
       dockerfile: Dockerfile
     container_name: bets_api
     restart: always
