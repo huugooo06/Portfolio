@@ -54,18 +54,6 @@ export const projects = [
     ],
   },
   {
-    title: 'Imaxis',
-    description: 'Sistema de gestión para centros educativos.',
-    image: axisImg,
-    url: '/imaxis/',
-    technologies: [
-      { name: 'Vue.js', svg: vueSvg },
-      { name: 'Tailwind', svg: tailwindSvg },
-      { name: 'Node.js', svg: nodeSvg },
-      { name: 'Docker', svg: dockerSvg },
-    ],
-  },
-  {
     title: 'Landing Page Axis',
     description: 'Página de aterrizaje corporativa para Axis.',
     image: axisImg,
@@ -97,17 +85,6 @@ export const projects = [
     technologies: [
       { name: 'Vue.js', svg: vueSvg },
       { name: 'Electron', svg: electronSvg },
-    ],
-  },
-  {
-    title: 'Aplicación Pujas',
-    description: 'Sistema de subastas en tiempo real.',
-    image: apiPeliculaImg,
-    url: '/pujas/',
-    technologies: [
-      { name: 'React', svg: reactSvg },
-      { name: 'Tailwind', svg: tailwindSvg },
-      { name: 'WebSockets', svg: socketSvg },
     ],
   },
   {

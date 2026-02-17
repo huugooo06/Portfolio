@@ -28,17 +28,6 @@ services:
       - web-public
 
   # ---------------------------------------------------------------------------
-  # PROJECT: Aplicacion_Pujas
-  # ---------------------------------------------------------------------------
-  pujas_frontend:
-    build:
-      context: ../PROYECTOS/Aplicacion_Pujas/frontend
-    container_name: pujas_frontend
-    restart: always
-    networks:
-      - web-public
-
-  # ---------------------------------------------------------------------------
   # PROJECT: CORDOBA-BETS
   # ---------------------------------------------------------------------------
   bets_frontend:
@@ -109,44 +98,6 @@ services:
       VITE_API_URL: "/fitai/api"
       CHOKIDAR_USEPOLLING: "true"
     command: [ "npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000" ]
-
-  # ---------------------------------------------------------------------------
-  # PROJECT: imaxis
-  # ---------------------------------------------------------------------------
-  imaxis_db:
-    image: postgres:15-alpine
-    container_name: imaxis_db
-    restart: always
-    networks:
-      - web-public
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: imaxis_db
-    volumes:
-      - imaxis_pgdata:/var/lib/postgresql/data
-
-  imaxis_backend:
-    build: ../PROYECTOS/imaxis/backend
-    container_name: imaxis_backend
-    restart: always
-    networks:
-      - web-public
-    environment:
-      DB_HOST: imaxis_db
-      DB_USER: admin
-      DB_PASS: admin123
-      DB_NAME: imaxis_db
-
-  imaxis_frontend:
-    build:
-      context: ../PROYECTOS/imaxis/frontend
-      target: build-stage
-    container_name: imaxis_frontend
-    restart: always
-    networks:
-      - web-public
-    command: npm run dev -- --host
 
   # ---------------------------------------------------------------------------
   # PROJECT: Landing Page Axis
