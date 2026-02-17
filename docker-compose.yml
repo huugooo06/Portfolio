@@ -149,7 +149,7 @@ services:
   # ---------------------------------------------------------------------------
   voice_frontend:
     build:
-      context: ../PROYECTOS/VOICECONTROLLER/VOICECONTROLLER/vuetify-project
+      context: ../PROYECTOS/VOICECONTROLLER/vuetify-project
       dockerfile: Dockerfile
     container_name: voice_frontend
     restart: always
