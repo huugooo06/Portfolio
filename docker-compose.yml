@@ -163,5 +163,4 @@ networks:
 volumes:
   bets_mongo_data:
   fitai_db_data:
-  imaxis_pgdata:
   tr2_db_data:
